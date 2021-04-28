@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Car Portal</title>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+.text-danger{
+color:red;
+font-weight:bold;
+}
+#result{
+color:green;
+}
+
+</style>
+<body>
+
+<div class="container">
+
+<br/>
+    <div class="form-horizontal" style="background-color:white; border-radius:10px;box-shadow: 0px 5px 15px 0px rgba(0,0,0,0.10);padding: 7px 10px 7px 25px;">
+        
+        <h3 >Select Your Car Brand and Model</h3>
+         <br />
+        
+        <p id="txterrormsg" class="text-danger"></p>
+         <br/>
+          <div class="form-group">
+              <label for="brand" class="col-md-2 selectbrand">Brand</label>
+            <div class="form-group col-md-10 brandlist">
+
+              	<select id="brand" name="brandname" class="form-control selectitem brandnamee" onchange = "callModelName()" >
+                    <option>-- Select Brand --</option>
+                </select>
+	 </div>
+            </div>
+			<br /> 
+        <div class="row">
+            <label for="modelid" class="col-md-2 selectmodel">Model</label>
+            <div class="form-group col-md-10 modellist">
+                <select id="model" name="modelname" class="form-control selectitem modelname" onclick="checkbrand()" disabled>
+                    <option>-- Select Model --</option>
+                </select>
+            </div>
+        </div>
+
+    <br />
+        
+        <p><strong>Your Selected Car : <span id="result" style="color:forestgreen;"></span></strong></p>
+        
+    <br />
+    </div>
+    </div> 
+
+</body>
+<script>
+$( document ).ready(function() {
+    callbrandname();
+});
+
+function callbrandname()
+{
+	var mainbrand = 'https://www.huk24.de/pkw24/api/5/comfortsearch/manufacturers';
+        $.ajax({ // send to ajax call 
+            dataType: 'json',
+            url: mainbrand ,
+            success: function (data) {
+				   $('.brandlist').empty();
+                    //build dropdown for brand list depends on load the page
+                    $('.brandlist').append('<select id="brandlist" name="modelname" class="form-control selectitem brandnamee" onchange = "callModelName()"><option value="Select Model">-- Select Brand --</option></select>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('.brandnamee').append('<option value=' + data[i] + '>' + data[i] + '</option>');
+                    }
+                
+            }
+        });
+}
+
+
+// call this function to get model name depends on chnage of brand dropdown
+function callModelName() {
+    $('#result').html("");
+    $('#txterrormsg').html("");
+    var getvaluee = document.getElementById("brandlist");
+    var sendbrandname = getvaluee.options[getvaluee.selectedIndex].text;
+    if (sendbrandname != "-- Select Brand --") {   // check if brand has value 
+        $(".modelname").prop("disabled", false);
+        $('.selectitem').css("border-color", "grey");
+	var modelmain = 'https://www.huk24.de/pkw24/api/5/comfortsearch/models?manufacturer='+sendbrandname+'&begin=2021-04-23';
+	var dd = modelmain;
+        $.ajax({ // send to ajax call to get brand list
+            dataType: 'json',
+            url: modelmain ,
+            success: function (data) {
+			if(data == undefined)
+			{
+			  $('#txterrormsg').html("Please Select Correct Brand Name");
+			}
+                    $('.modellist').empty();
+                    //build dropdown for model list depends on brand
+                    $('.modellist').append('<select id="modellist" name="modelname" class="form-control selectitem modelname" onchange="sendModalname()"><option value="Select Model">-- Select Model --</option></select>');
+
+                    for (var i = 0; i < data.length; i++) {
+                        $('.modelname').append('<option value=' + data[i] + '>' + data[i] + '</option>');
+                    }
+              
+               
+            }
+        });
+    }
+    else {
+        // if brand has no value, have to display this message to select the brand name
+        $(".modelname").prop("disabled", true);
+        $('.modelname').find('option').not(':first').remove();
+        $('#txterrormsg').html("Please Select Brand Name");
+        $('#brandlist').css("border-color", "red");
+        $('.modelname').css("border-color", "grey");
+    }
+}
+
+// call this function, when model change depends on brand, and to display as result of selection
+function sendModalname() {
+
+    $('#result').html("");
+    $('#txterrormsg').html("");
+    $('.selectitem').css("border-color", "grey");
+    var getbrand = document.getElementById("brandlist");
+    var sendbrandname = getbrand.options[getbrand.selectedIndex].text;
+
+    var getmodal = document.getElementById("modellist");
+    var sendmodelname = getmodal.options[getmodal.selectedIndex].text;
+
+    if (sendbrandname == "-- Select Brand --") {
+        $('#txterrormsg').html("Please Select Brand Name");
+        $('#brandlist').css("border-color", "red");
+    }
+    else if (sendmodelname == "-- Select Model --") {
+        $('#txterrormsg').html("Please Select Model Name");
+        $('.modelname').css("border-color", "red");
+    }
+    else if (sendmodelname == "-- Select Model --" && sendbrandname == "-- Select Brand --") {
+        $('#txterrormsg').html("Please Select Brand and Model Name");
+        $('.selectitem').css("border-color", "red");
+    }
+    else {
+        $('.selectitem').css("border-color", "grey");
+        $('#result').html(sendbrandname + " - " + sendmodelname);  // result is display of selection
+    }
+
+
+}
+
+// call this function to check whether brand has correct value or not 
+function checkbrand() {
+    $('#txterrormsg').html("");
+    var getbrand = document.getElementById("brandlist");
+    var sendbrandname = getbrand.options[getbrand.selectedIndex].text;
+
+    if (sendbrandname == "-- Select Brand --") {
+        $('#txterrormsg').html("Please Select Brand Name");
+
+    }
+    else {
+        $('#txterrormsg').html("");
+    }
+}
+</script>
+
+</html>
