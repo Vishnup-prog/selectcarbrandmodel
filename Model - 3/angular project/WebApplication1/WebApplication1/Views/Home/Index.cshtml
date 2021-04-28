@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container" ng-app="myApp" ng-controller="myCtrl">
+
+    <div class="form-horizontal" style="background-color:white;border-radius:10px;box-shadow: 0px 5px 15px 0px rgba(0,0,0,0.10);
+        padding: 7px 10px 7px 25px;margin-left:25%;margin-right:28%;">
+        <h3>Select Your Car Brand and Model</h3>
+        <br />
+
+        <p id="txterrormsg" class="text-danger">{{errormsg}}</p>
+        <br />
+        @*get brand dropdown from api*@
+        <div class="form-group">
+            <label for="brand" class="col-md-2 selectbrand">Brand</label>
+            <div class="form-group col-md-10">
+               
+                <select ng-model="selectedCarbrand" class="form-control selectitem" ng-change="callModelName(selectedCarbrand)">
+                    <option selected value="-- Select Brand --">-- Select Brand --</option>
+                    <option ng-repeat="x in carbrands" value="{{x}}">{{x}}</option>
+                </select>
+            </div>
+        </div>
+        @*get model dropdwon from api*@
+        <div class="row">
+            <label for="modelid" class="col-md-2 selectmodel">Model</label>
+            <div class="form-group col-md-10 modellist">
+
+                <select ng-model="selectedCarmodel" class="form-control selectitem modelname" ng-change="checkmodel(selectedCarmodel)" disabled>
+                    <option selected value="-- Select Model --">-- Select Model --</option>
+                    <option ng-repeat="x in carmodel" value="{{x}}">{{x}}</option>
+                </select>
+            </div>
+        </div>
+
+        <br />
+       
+        <p><strong>Your Selected Car : <span id="result">{{selectedCarbrand}} - {{selectedCarmodel}}</span></strong></p>
+
+        <br />
+    </div>
+
+</div>
+
+
+<script src="~/Scripts/angular.min.js"></script>
+<script>
+
+   var app = angular.module('myApp', []);
+   app.controller('myCtrl', function ($scope, $http) {
+
+       $scope.selectedCarbrand = "-- Select Brand --";
+       $scope.selectedCarmodel = "-- Select Model --";
+
+       // call this ajax call to get brand list
+        $http({
+            url: '/Home/callbrand',
+            method: 'Get',
+        }).then(function (response) {
+
+            if(response.data.success == true){
+                $scope.carbrands = response.data.listofdata;
+              
+                $('.selectitem').css("border-color", "grey");
+            }
+        }, function (response) {
+            alert(response.data.success);
+        });
+
+       // call this function to get model name depends on chnage of brand dropdown
+        $scope.callModelName = function (item) {
+            $scope.errormsg = "";
+            if (item != "-- Select Brand --") {
+
+                $http({
+                    url: '/Home/callModel',
+                    method: 'Get',
+                    params: { sendbrandname: item }
+                }).then(function (response) {
+
+                    if (response.data.success == true) {
+                        $(".modelname").prop("disabled", false);
+                        $scope.carmodel = response.data.modelList;
+                        $scope.selectedCarmodel = "-- Select Model --";
+                    }
+                }, function (response) {
+                    alert(response.data.success);
+                });
+            }
+            else {
+                $scope.errormsg = "Please Select Car Brand";
+                $scope.selectedCarbrand = "-- Select Brand --";
+                $scope.selectedCarmodel = "-- Select Model --";
+                $(".modelname").prop("disabled", true);
+            }
+        }
+       // call this function, when model change depends on brand, and to display as result of selection 
+        $scope.checkmodel = function (selecteditem) {
+            $scope.errormsg = "";
+            if (selecteditem == "-- Select Model --") {
+
+                $scope.errormsg = "Please Select Car Model";
+                $scope.selectedCarmodel = "-- Select Model --";
+            }
+
+        }
+   });
+</script>
+<style>
+   #result{
+       color:forestgreen;
+   }
+   #txterrormsg{
+       font-weight:bold;
+   }
+</style>
+

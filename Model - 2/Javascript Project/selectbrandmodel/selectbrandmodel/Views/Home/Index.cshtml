@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container">
+    <div class="form-horizontal" style="background-color:white; border-radius:10px;box-shadow: 0px 5px 15px 0px rgba(0,0,0,0.10);padding: 7px 10px 7px 25px;margin-left:25%;margin-right:28%;">
+        
+        <h3 >Select Your Car Brand and Model</h3>
+         <br />
+        
+        <p id="txterrormsg" class="text-danger"></p>
+         <br/>
+           @*get brand dropdown from api*@
+          <div class="form-group">
+              <label for="brand" class="col-md-2 selectbrand">Brand</label>
+            <div class="form-group col-md-10">
+                @Html.DropDownList("brand", (SelectList)ViewBag.brandList, "-- Select Brand --", new { name = "brandname", @class = "form-control selectitem", @onchange = "callModelName()" })
+             </div>
+            </div>
+        @*get model dropdwon from api*@
+        <div class="row">
+            <label for="modelid" class="col-md-2 selectmodel">Model</label>
+            <div class="form-group col-md-10 modellist">
+                <select id="model" name="modelname" class="form-control selectitem modelname" onclick="checkbrand()" disabled>
+                    <option>-- Select Model --</option>
+                </select>
+            </div>
+        </div>
+
+    <br />
+        
+        <p><strong>Your Selected Car : <span id="result" style="color:forestgreen;"></span></strong></p>
+        
+    <br />
+    </div>
+    </div> 
+
+@section Scripts {
+<script src="~/Scripts/Indexjs.js"></script>
+}
