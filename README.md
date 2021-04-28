@@ -6,7 +6,7 @@
     - Used Jquery framework, boostrap for responsive css plugins to run the application
 	- Its has Readme file which contains brief explanation of working between view and controller
 	
-3. Model - 3 -> Angular Project build with Angular in Mvc which in Visual studio 2019.
+3. Model - 3 -> Angular Project build with Angular in Mvc which in Visual studio 2015.
 	- Used Angular framework, boostrap for responsive css plugins to run the application
 	- Its has Readme file which contains brief explanation of working between view and controller
 	
@@ -22,3 +22,4 @@
     - Calling Viewbag list from razor view in Angular Project, but only in Script not in html. So i used Ajax call for even brand name 
  
 
+Note ** brand List api start with "bitte wÃ¤hlen Sie" - "I left this option bitte wÃ¤hlen Sie (choose one please ). may be Its a dropdown for germany standard. So I left as it is"

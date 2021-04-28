@@ -71,8 +71,7 @@
        // call this function to get model name depends on chnage of brand dropdown
         $scope.callModelName = function (item) {
             $scope.errormsg = "";
-            if (item != "-- Select Brand --") {
-
+            if (item != "-- Select Brand --" && item != "bitte wÃ¤hlen Sie") {
                 $http({
                     url: '/Home/callModel',
                     method: 'Get',
